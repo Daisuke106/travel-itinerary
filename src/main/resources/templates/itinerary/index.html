@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅程一覧 | 旅行しおり</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #f0f4ff; font-family: 'Helvetica Neue', sans-serif; }
+        .page-header { background: linear-gradient(135deg, #1a56db 0%, #0891b2 100%);
+                       color: white; padding: 2.5rem 0; margin-bottom: 2rem; }
+        .card { border: none; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+                transition: transform 0.2s, box-shadow 0.2s; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+        .card-badge { font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; }
+        .empty-state { text-align: center; padding: 4rem 0; color: #9ca3af; }
+        .btn-create { background: linear-gradient(135deg, #1a56db, #0891b2);
+                      border: none; border-radius: 10px; padding: 0.6rem 1.5rem; }
+    </style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<div class="page-header">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="fw-bold mb-1"><i class="bi bi-map me-2"></i>旅行しおり</h1>
+            <p class="mb-0 opacity-75">あなたの旅を記録・共有しよう</p>
+        </div>
+        <a th:href="@{/itineraries/new}" class="btn btn-light btn-create fw-semibold">
+            <i class="bi bi-plus-circle me-2"></i>新しい旅程を作る
+        </a>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- フラッシュメッセージ -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- 旅程一覧 -->
+    <div th:if="${#lists.isEmpty(itineraries)}" class="empty-state">
+        <i class="bi bi-airplane display-1 d-block mb-3"></i>
+        <h4>まだ旅程がありません</h4>
+        <p>「新しい旅程を作る」ボタンから最初の旅程を作ってみましょう！</p>
+    </div>
+
+    <div class="row g-4" th:unless="${#lists.isEmpty(itineraries)}">
+        <div class="col-md-6 col-lg-4" th:each="itinerary : ${itineraries}">
+            <div class="card h-100 p-1">
+                <div class="card-body">
+                    <!-- カテゴリバッジ -->
+                    <span class="badge bg-primary bg-opacity-10 text-primary card-badge mb-2">
+                        <i class="bi bi-calendar3 me-1"></i>
+                        <span th:text="${itinerary.tripDays} + '日間'">3日間</span>
+                    </span>
+
+                    <h5 class="card-title fw-bold" th:text="${itinerary.title}">四国旅行</h5>
+
+                    <p class="text-muted small mb-1">
+                        <i class="bi bi-geo-alt me-1"></i>
+                        <span th:text="${itinerary.departureLocation}">東京</span> 発
+                    </p>
+                    <p class="text-muted small mb-1">
+                        <i class="bi bi-calendar-range me-1"></i>
+                        <span th:text="${#temporals.format(itinerary.startDate, 'yyyy/MM/dd')}">2026/07/20</span>
+                        〜
+                        <span th:text="${#temporals.format(itinerary.endDate, 'yyyy/MM/dd')}">2026/07/25</span>
+                    </p>
+                    <p class="text-muted small">
+                        <i class="bi bi-people me-1"></i>
+                        <span th:text="${itinerary.memberCount} + '名'">2名</span>
+                    </p>
+
+                    <div th:if="${itinerary.notes}" class="mt-2">
+                        <p class="text-muted small text-truncate" th:text="${itinerary.notes}"></p>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <a th:href="@{/itineraries/{id}(id=${itinerary.id})}"
+                       class="btn btn-primary w-100 rounded-3">
+                        <i class="bi bi-eye me-1"></i>詳細を見る
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

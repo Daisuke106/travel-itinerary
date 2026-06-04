@@ -1,0 +1,68 @@
+# ============================================================
+#  共通設定
+# ============================================================
+spring:
+  application:
+    name: travel-itinerary
+
+  # デフォルトは開発プロファイル (H2使用)
+  profiles:
+    active: dev
+
+  jpa:
+    hibernate:
+      ddl-auto: update          # 起動時にエンティティからテーブルを自動更新
+    show-sql: true              # 実行SQLをコンソールに表示 (学習用)
+    properties:
+      hibernate:
+        format_sql: true        # SQLを整形して表示
+
+  thymeleaf:
+    cache: false                # 開発中はキャッシュ無効
+
+server:
+  port: 8080
+
+# ============================================================
+#  開発プロファイル (H2インメモリDB)
+# ============================================================
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:h2:mem:traveldb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true             # http://localhost:8080/h2-console でDB確認可能
+      path: /h2-console
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+
+# ============================================================
+#  本番プロファイル (PostgreSQL)
+#  起動時: java -jar app.jar --spring.profiles.active=prod
+# ============================================================
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/travel_itinerary
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME}    # 環境変数から取得
+    password: ${DB_PASSWORD}    # 環境変数から取得
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate        # 本番はテーブル自動変更しない
