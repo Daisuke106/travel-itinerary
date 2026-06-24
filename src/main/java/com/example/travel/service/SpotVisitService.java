@@ -118,8 +118,9 @@ public class SpotVisitService {
     @Transactional
     public void moveUp(Long visitId) {
         SpotVisit visit = findById(visitId);
-        if (visit.getVisitOrder() <= 1)
+        if (visit.getVisitOrder() <= 1) {
             return; // 先頭なら何もしない
+        }
 
         Long dayId = visit.getItineraryDay().getId();
         List<SpotVisit> visits = spotVisitRepository.findByItineraryDayIdOrderByVisitOrderAsc(dayId);
@@ -145,8 +146,9 @@ public class SpotVisitService {
         Long dayId = visit.getItineraryDay().getId();
         int maxOrder = spotVisitRepository.findMaxVisitOrderByDayId(dayId);
 
-        if (visit.getVisitOrder() >= maxOrder)
+        if (visit.getVisitOrder() >= maxOrder) {
             return; // 末尾なら何もしない
+        }
 
         List<SpotVisit> visits = spotVisitRepository.findByItineraryDayIdOrderByVisitOrderAsc(dayId);
 
