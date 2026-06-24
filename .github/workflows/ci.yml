@@ -19,4 +19,4 @@ jobs:
           cache: maven
 
       - name: Build, test, and check code quality
-        run: ./mvnw --batch-mode verify
+        run: mvn --batch-mode verify
