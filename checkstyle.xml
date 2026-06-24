@@ -1,0 +1,229 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!--
+    コーディング規約自動チェック設定
+    参照: docs/CODING_STANDARDS.md
+    実行: ./mvnw checkstyle:check
+-->
+<module name="Checker">
+    <property name="severity" value="error"/>
+    <property name="fileExtensions" value="java"/>
+
+    <!-- ========================================================
+         ファイルレベルのチェック
+         ======================================================== -->
+
+    <!-- タブ文字禁止 (規約37) -->
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="true"/>
+        <message key="containsTab"
+                 value="[規約37] タブ文字は使用禁止です。半角スペース4つでインデントしてください。"/>
+    </module>
+
+    <!-- 1行 110 文字以内 (規約33) -->
+    <module name="LineLength">
+        <property name="max" value="110"/>
+        <property name="ignorePattern" value="^( *\* *|//.*|.*import .*)$"/>
+        <message key="maxLineLength"
+                 value="[規約33] 1行は110文字以内にしてください。"/>
+    </module>
+
+    <!-- ========================================================
+         構文ツリーレベルのチェック
+         ======================================================== -->
+    <module name="TreeWalker">
+
+        <!-- --------------------------------------------------------
+             命名規約
+             -------------------------------------------------------- -->
+
+        <!-- パッケージ名: すべて小文字・単数形 (規約3) -->
+        <module name="PackageName">
+            <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
+            <message key="name.invalidPattern"
+                     value="[規約3] パッケージ名はすべて小文字にしてください: {0}"/>
+        </module>
+
+        <!-- クラス名・インタフェース名: PascalCase (規約7) -->
+        <module name="TypeName">
+            <property name="format" value="^[A-Z][a-zA-Z0-9]*$"/>
+            <message key="name.invalidPattern"
+                     value="[規約7] クラス名はPascalCase形式で記述してください: {0}"/>
+        </module>
+
+        <!-- メソッド名: camelCase (規約14) -->
+        <module name="MethodName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+            <message key="name.invalidPattern"
+                     value="[規約14] メソッド名はcamelCase形式で記述してください: {0}"/>
+        </module>
+
+        <!-- インスタンス変数名: camelCase (規約20) -->
+        <module name="MemberName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+            <message key="name.invalidPattern"
+                     value="[規約20] 変数名はcamelCase形式で記述してください: {0}"/>
+        </module>
+
+        <!-- ローカル変数名: camelCase (規約20) -->
+        <module name="LocalVariableName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+            <message key="name.invalidPattern"
+                     value="[規約20] ローカル変数名はcamelCase形式で記述してください: {0}"/>
+        </module>
+
+        <!-- 引数名: camelCase (規約23) -->
+        <module name="ParameterName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+            <message key="name.invalidPattern"
+                     value="[規約23] 引数名はcamelCase形式で記述してください: {0}"/>
+        </module>
+
+        <!-- 定数名: UPPER_SNAKE_CASE (規約24) -->
+        <module name="ConstantName">
+            <property name="format" value="^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+            <message key="name.invalidPattern"
+                     value="[規約24] 定数名はUPPER_SNAKE_CASE形式で記述してください: {0}"/>
+        </module>
+
+        <!-- --------------------------------------------------------
+             スタイル規約
+             -------------------------------------------------------- -->
+
+        <!-- インデント: 4スペース (規約37) -->
+        <module name="Indentation">
+            <property name="basicOffset" value="4"/>
+            <property name="caseIndent" value="4"/>
+            <property name="throwsIndent" value="4"/>
+            <property name="arrayInitIndent" value="4"/>
+            <property name="lineWrappingIndentation" value="8"/>
+        </module>
+
+        <!-- { は行末に (規約35) -->
+        <module name="LeftCurly">
+            <property name="option" value="eol"/>
+            <message key="line.previous"
+                     value="[規約35] 「{」はブロック開始行の末尾に記述してください。"/>
+        </module>
+
+        <!-- } は単独行に (規約38) -->
+        <module name="RightCurly">
+            <property name="option" value="alone"/>
+        </module>
+
+        <!-- 制御文には必ず {} (規約84) -->
+        <module name="NeedBraces">
+            <property name="tokens"
+                      value="LITERAL_DO, LITERAL_ELSE, LITERAL_FOR, LITERAL_IF, LITERAL_WHILE"/>
+            <message key="needBraces"
+                     value="[規約84] 制御文の「{}」は省略しないでください。"/>
+        </module>
+
+        <!-- 1行に2つ以上のステートメントを書かない (規約41) -->
+        <module name="OneStatementPerLine">
+            <message key="multiple.statements.line"
+                     value="[規約41] 1行に2つ以上のステートメントを書かないでください。"/>
+        </module>
+
+        <!-- カンマ・セミコロンの後ろに空白 (規約44) -->
+        <module name="WhitespaceAfter">
+            <property name="tokens" value="COMMA, SEMI, TYPECAST"/>
+        </module>
+
+        <!-- 演算子の前後に空白 (規約44) -->
+        <module name="WhitespaceAround">
+            <property name="tokens"
+                      value="ASSIGN, BAND, BAND_ASSIGN, BOR, BOR_ASSIGN,
+                             BXOR, BXOR_ASSIGN, DIV, DIV_ASSIGN, EQUAL,
+                             GE, GT, LAND, LE, LOR, LT, MINUS, MINUS_ASSIGN,
+                             MOD, MOD_ASSIGN, NOT_EQUAL, PLUS, PLUS_ASSIGN,
+                             SL, SL_ASSIGN, SR, SR_ASSIGN, STAR, STAR_ASSIGN,
+                             LITERAL_ASSERT, LITERAL_CATCH, LITERAL_DO,
+                             LITERAL_ELSE, LITERAL_FINALLY, LITERAL_FOR,
+                             LITERAL_IF, LITERAL_RETURN, LITERAL_TRY, LITERAL_WHILE,
+                             TYPE_EXTENSION_AND"/>
+            <property name="allowEmptyConstructors" value="true"/>
+            <property name="allowEmptyMethods" value="true"/>
+            <property name="allowEmptyTypes" value="true"/>
+            <property name="allowEmptyLoops" value="true"/>
+            <property name="allowEmptyLambdas" value="true"/>
+        </module>
+
+        <!-- { の前に空白 (規約35) -->
+        <module name="WhitespaceBefore">
+            <property name="tokens" value="LCURLY"/>
+        </module>
+
+        <!-- --------------------------------------------------------
+             メソッド定義
+             -------------------------------------------------------- -->
+
+        <!-- メソッドの最大行数: 150行 (規約49) -->
+        <module name="MethodLength">
+            <property name="max" value="150"/>
+            <property name="tokens" value="METHOD_DEF, CTOR_DEF"/>
+            <message key="maxLen.method"
+                     value="[規約49] メソッドは150行以内にしてください。現在: {0}行。"/>
+        </module>
+
+        <!-- 循環的複雑度: 上限19 (規約50) -->
+        <module name="CyclomaticComplexity">
+            <property name="max" value="19"/>
+            <message key="cyclomaticComplexity"
+                     value="[規約50] 循環的複雑度が上限(19)を超えています: {0}。リファクタリングを検討してください。"/>
+        </module>
+
+        <!-- 引数の数: 上限10個 (規約54) -->
+        <module name="ParameterNumber">
+            <property name="max" value="10"/>
+            <message key="maxParam"
+                     value="[規約54] 引数の数は10個以内にしてください。現在: {0}個。"/>
+        </module>
+
+        <!-- --------------------------------------------------------
+             クラス設計
+             -------------------------------------------------------- -->
+
+        <!-- equals 実装時は hashCode も実装 (規約80) -->
+        <module name="EqualsHashCode">
+            <message key="equals.noHashCode"
+                     value="[規約80] equalsメソッドを実装した場合はhashCodeメソッドも実装してください。"/>
+        </module>
+
+        <!-- --------------------------------------------------------
+             インポート
+             -------------------------------------------------------- -->
+
+        <!-- 未使用 import の削除 (規約27) -->
+        <module name="UnusedImports">
+            <property name="processJavadoc" value="false"/>
+            <message key="import.unused"
+                     value="[規約27] 未使用のimportは削除してください: {0}"/>
+        </module>
+
+        <!-- --------------------------------------------------------
+             例外処理
+             -------------------------------------------------------- -->
+
+        <!-- catch ブロックを空にしない (規約103) -->
+        <module name="EmptyCatchBlock">
+            <property name="exceptionVariableName" value="expected|ignore"/>
+            <message key="catchBlock.empty"
+                     value="[規約103] catchブロックには必ず処理を記述してください。"/>
+        </module>
+
+        <!-- --------------------------------------------------------
+             アノテーション
+             -------------------------------------------------------- -->
+
+        <!-- @Override を必ず付ける (規約111) -->
+        <module name="MissingOverride">
+            <message key="annotation.missing.override"
+                     value="[規約111] オーバーライドするメソッドには@Overrideアノテーションを付けてください。"/>
+        </module>
+
+    </module>
+</module>

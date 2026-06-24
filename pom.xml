@@ -109,6 +109,32 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <!-- コーディング規約チェック (./mvnw checkstyle:check または ./mvnw verify) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <encoding>UTF-8</encoding>
+                    <consoleOutput>true</consoleOutput>
+                    <failOnViolation>true</failOnViolation>
+                    <linkXRef>false</linkXRef>
+                    <!-- Lombok が生成するコードや DataInitializer を除外 -->
+                    <excludes>**/DataInitializer.java</excludes>
+                </configuration>
+                <executions>
+                    <!-- verify フェーズで自動実行 (mvn verify / PR CI で使用) -->
+                    <execution>
+                        <id>checkstyle-verify</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
