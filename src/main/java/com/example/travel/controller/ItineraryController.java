@@ -69,6 +69,8 @@ public class ItineraryController {
         }
 
         try {
+            // マスアサインメント対策: フォームからIDが送られてきても新規作成として扱う
+            itinerary.setId(null);
             Itinerary created = itineraryService.create(itinerary);
             redirectAttributes.addFlashAttribute("successMessage", "旅程を作成しました！");
             return "redirect:/itineraries/" + created.getId();

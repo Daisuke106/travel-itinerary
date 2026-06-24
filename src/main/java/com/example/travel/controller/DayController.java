@@ -4,6 +4,7 @@ import com.example.travel.entity.Spot;
 import com.example.travel.repository.SpotRepository;
 import com.example.travel.service.SpotVisitService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +27,7 @@ import java.time.LocalTime;
  * 操作後は旅程詳細画面 (/itineraries/{itineraryId}) にリダイレクトする。
  * → 「POST → Redirect → GET」パターン (PRGパターン) でF5リロードの二重送信を防ぐ
  */
+@Slf4j
 @Controller
 @RequestMapping("/days/{dayId}")
 @RequiredArgsConstructor
@@ -84,8 +86,11 @@ public class DayController {
         try {
             spotVisitService.addSpotToDay(dayId, spotId, arrivalTime, memo, budget);
             redirectAttributes.addFlashAttribute("successMessage", "スポットを追加しました");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "追加に失敗しました: " + e.getMessage());
+            log.error("スポット追加中にエラーが発生しました: dayId={}, spotId={}", dayId, spotId, e);
+            redirectAttributes.addFlashAttribute("errorMessage", "スポットの追加に失敗しました。しばらく経ってから再度お試しください。");
         }
 
         // 旅程詳細ページに戻る（PRGパターン）
@@ -102,8 +107,16 @@ public class DayController {
             @RequestParam Long itineraryId,
             RedirectAttributes redirectAttributes) {
 
-        spotVisitService.remove(visitId);
-        redirectAttributes.addFlashAttribute("successMessage", "スポットを削除しました");
+        try {
+            spotVisitService.validateVisitBelongsToDay(visitId, dayId);
+            spotVisitService.remove(visitId);
+            redirectAttributes.addFlashAttribute("successMessage", "スポットを削除しました");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            log.error("スポット削除中にエラーが発生しました: dayId={}, visitId={}", dayId, visitId, e);
+            redirectAttributes.addFlashAttribute("errorMessage", "スポットの削除に失敗しました。しばらく経ってから再度お試しください。");
+        }
         return "redirect:/itineraries/" + itineraryId;
     }
 
@@ -114,9 +127,18 @@ public class DayController {
     @PostMapping("/visits/{visitId}/move-up")
     public String moveUp(@PathVariable Long dayId,
             @PathVariable Long visitId,
-            @RequestParam Long itineraryId) {
+            @RequestParam Long itineraryId,
+            RedirectAttributes redirectAttributes) {
 
-        spotVisitService.moveUp(visitId);
+        try {
+            spotVisitService.validateVisitBelongsToDay(visitId, dayId);
+            spotVisitService.moveUp(visitId);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            log.error("スポット移動(上)中にエラーが発生しました: dayId={}, visitId={}", dayId, visitId, e);
+            redirectAttributes.addFlashAttribute("errorMessage", "スポットの移動に失敗しました。しばらく経ってから再度お試しください。");
+        }
         return "redirect:/itineraries/" + itineraryId;
     }
 
@@ -127,9 +149,18 @@ public class DayController {
     @PostMapping("/visits/{visitId}/move-down")
     public String moveDown(@PathVariable Long dayId,
             @PathVariable Long visitId,
-            @RequestParam Long itineraryId) {
+            @RequestParam Long itineraryId,
+            RedirectAttributes redirectAttributes) {
 
-        spotVisitService.moveDown(visitId);
+        try {
+            spotVisitService.validateVisitBelongsToDay(visitId, dayId);
+            spotVisitService.moveDown(visitId);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            log.error("スポット移動(下)中にエラーが発生しました: dayId={}, visitId={}", dayId, visitId, e);
+            redirectAttributes.addFlashAttribute("errorMessage", "スポットの移動に失敗しました。しばらく経ってから再度お試しください。");
+        }
         return "redirect:/itineraries/" + itineraryId;
     }
 }

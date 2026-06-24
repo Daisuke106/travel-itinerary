@@ -1,6 +1,8 @@
 package com.example.travel.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -44,10 +46,12 @@ public class SpotVisit {
     private LocalTime departureTime;
 
     /** メモ (予約番号・注意事項など) */
+    @Size(max = 1000, message = "メモは1000文字以内で入力してください")
     @Column(columnDefinition = "TEXT")
     private String memo;
 
     /** 予算 (円) */
+    @Min(value = 0, message = "予算は0以上の値を入力してください")
     @Column
     private Integer budget;
 

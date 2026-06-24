@@ -118,8 +118,9 @@ public class SpotVisitService {
     @Transactional
     public void moveUp(Long visitId) {
         SpotVisit visit = findById(visitId);
-        if (visit.getVisitOrder() <= 1)
+        if (visit.getVisitOrder() <= 1) {
             return; // 先頭なら何もしない
+        }
 
         Long dayId = visit.getItineraryDay().getId();
         List<SpotVisit> visits = spotVisitRepository.findByItineraryDayIdOrderByVisitOrderAsc(dayId);
@@ -145,8 +146,9 @@ public class SpotVisitService {
         Long dayId = visit.getItineraryDay().getId();
         int maxOrder = spotVisitRepository.findMaxVisitOrderByDayId(dayId);
 
-        if (visit.getVisitOrder() >= maxOrder)
+        if (visit.getVisitOrder() >= maxOrder) {
             return; // 末尾なら何もしない
+        }
 
         List<SpotVisit> visits = spotVisitRepository.findByItineraryDayIdOrderByVisitOrderAsc(dayId);
 
@@ -168,6 +170,18 @@ public class SpotVisitService {
     public SpotVisit findById(Long id) {
         return spotVisitRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("訪問記録が見つかりません: id=" + id));
+    }
+
+    /**
+     * visitId が dayId に属するか検証する (IDOR対策)
+     *
+     * URLパラメーターを改ざんして他の日程のスポットを操作できないようにする。
+     * 不正アクセスの場合は例外を投げ、呼び出し元でエラーメッセージに変換する。
+     */
+    public void validateVisitBelongsToDay(Long visitId, Long dayId) {
+        if (!spotVisitRepository.existsByIdAndItineraryDayId(visitId, dayId)) {
+            throw new IllegalArgumentException("指定された訪問記録が見つかりません");
+        }
     }
 
     // =========================================================

@@ -61,6 +61,18 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Spring Security (CSRF保護・セキュリティヘッダー) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- Thymeleaf + Spring Security (th:actionへのCSRFトークン自動挿入) -->
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+        </dependency>
+
         <!-- Lombok (getter/setter自動生成) -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -96,6 +108,41 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+
+            <!-- コーディング規約チェック (./mvnw checkstyle:check または ./mvnw verify) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.4.0</version>
+                <dependencies>
+                    <!-- Spring Boot 3.3 が引き込む Guava 32+ と非互換な checkstyle-9.3 を
+                         10.x に上書きして NoSuchMethodError を回避する -->
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>10.17.0</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <encoding>UTF-8</encoding>
+                    <consoleOutput>true</consoleOutput>
+                    <failOnViolation>true</failOnViolation>
+                    <linkXRef>false</linkXRef>
+                    <!-- Lombok が生成するコードや DataInitializer を除外 -->
+                    <excludes>**/DataInitializer.java</excludes>
+                </configuration>
+                <executions>
+                    <!-- verify フェーズで自動実行 (mvn verify / PR CI で使用) -->
+                    <execution>
+                        <id>checkstyle-verify</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -10,18 +10,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Arrays;
-
 /**
  * スポットコントローラー
  *
  * 【URLマッピングの設計方針】
- *   /spots          → スポット一覧
- *   /spots/new      → 新規作成フォーム
- *   /spots/{id}     → 詳細
- *   /spots/{id}/edit → 編集フォーム
+ * /spots → スポット一覧
+ * /spots/new → 新規作成フォーム
+ * /spots/{id} → 詳細
+ * /spots/{id}/edit → 編集フォーム
  *
- *   RESTfulなURL設計にすることで「どのURLが何をするか」が直感的になる。
+ * RESTfulなURL設計にすることで「どのURLが何をするか」が直感的になる。
  */
 @Controller
 @RequestMapping("/spots")
@@ -35,13 +33,13 @@ public class SpotController {
      * GET /spots
      *
      * 【Model の使い方】
-     *   model.addAttribute("キー名", 値) でHTMLテンプレートに値を渡す。
-     *   Thymeleaf側では th:each="${spots}" のように参照できる。
+     * model.addAttribute("キー名", 値) でHTMLテンプレートに値を渡す。
+     * Thymeleaf側では th:each="${spots}" のように参照できる。
      */
     @GetMapping
     public String index(Model model,
-                        @RequestParam(required = false) String keyword,
-                        @RequestParam(required = false) Spot.SpotCategory category) {
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Spot.SpotCategory category) {
 
         // 検索条件に応じてスポット一覧を取得
         if (keyword != null && !keyword.isBlank()) {
@@ -74,23 +72,26 @@ public class SpotController {
      * POST /spots
      *
      * 【@Valid と BindingResult の組み合わせ】
-     *   @Valid   → Spot エンティティの @NotBlank などバリデーションを実行
-     *   BindingResult → バリデーション結果を受け取る変数
-     *   bindingResult.hasErrors() が true なら入力エラーあり → フォームに戻す
+     * 
+     * @Valid → Spot エンティティの @NotBlank などバリデーションを実行
+     *        BindingResult → バリデーション結果を受け取る変数
+     *        bindingResult.hasErrors() が true なら入力エラーあり → フォームに戻す
      *
-     *   【重要】 BindingResult は @Valid の直後に書かないとエラーが飛ぶ！
+     *        【重要】 BindingResult は @Valid の直後に書かないとエラーが飛ぶ！
      */
     @PostMapping
     public String create(@Valid @ModelAttribute Spot spot,
-                         BindingResult bindingResult,
-                         Model model,
-                         RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult,
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", Spot.SpotCategory.values());
             return "spot/form";
         }
 
+        // マスアサインメント対策: フォームからIDが送られてきても新規作成として扱う
+        spot.setId(null);
         spotRepository.save(spot);
         redirectAttributes.addFlashAttribute("successMessage",
                 "「" + spot.getName() + "」を登録しました");
@@ -116,10 +117,10 @@ public class SpotController {
      */
     @PostMapping("/{id}")
     public String update(@PathVariable Long id,
-                         @Valid @ModelAttribute Spot spot,
-                         BindingResult bindingResult,
-                         Model model,
-                         RedirectAttributes redirectAttributes) {
+            @Valid @ModelAttribute Spot spot,
+            BindingResult bindingResult,
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", Spot.SpotCategory.values());
