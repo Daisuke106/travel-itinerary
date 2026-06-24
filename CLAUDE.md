@@ -20,25 +20,38 @@ Spring Boot を使った旅行しおり（旅程管理）Web アプリ。
 
 ## 主要コマンド
 
-```bash
+> **Java 21 が必要です。** 初回は下記の「Java 21 への切り替え」を先に行ってください。
+
+```powershell
 # 開発サーバー起動 (H2 + サンプルデータ自動投入)
-./mvnw spring-boot:run
+.\mvnw spring-boot:run
 
 # 本番モードで起動 (要: DB_USERNAME / DB_PASSWORD 環境変数)
-./mvnw spring-boot:run -Dspring.profiles.active=prod
+.\mvnw spring-boot:run "-Dspring.profiles.active=prod"
 
 # ビルド (JAR 生成)
-./mvnw clean package
+.\mvnw clean package
 
 # テスト実行
-./mvnw test
+.\mvnw test
 
 # コーディング規約チェック (Checkstyle)
-./mvnw checkstyle:check
+.\mvnw checkstyle:check
 
 # 規約チェック付きフルビルド
-./mvnw verify
+.\mvnw verify
 ```
+
+### Java 21 への切り替え (PowerShell — セッションごとに必要)
+
+```powershell
+$env:JAVA_HOME = "C:\pleiades2026\java\21"
+$env:PATH = "$env:JAVA_HOME\bin;" + $env:PATH
+java --version   # openjdk 21.x と表示されれば OK
+```
+
+永続化したい場合は `C:\pleiades2026\java\set-JAVA_HOME-21.cmd` を実行するか、
+システム環境変数 `JAVA_HOME` を `C:\pleiades2026\java\21` に設定してください。
 
 ## ディレクトリ構成
 
