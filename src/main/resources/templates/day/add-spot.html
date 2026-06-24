@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>スポットを追加 | 旅行しおり</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f0f4ff;
+      }
+      .page-card {
+        max-width: 700px;
+        margin: 2rem auto;
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+      .spot-item {
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1rem;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+      }
+      .spot-item:hover {
+        border-color: #1a56db;
+        background: #f0f4ff;
+      }
+      .spot-item.selected {
+        border-color: #1a56db;
+        background: #eef2ff;
+      }
+      .spot-item input[type="radio"] {
+        display: none;
+      }
+      .category-badge {
+        font-size: 0.72rem;
+        padding: 2px 8px;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-card">
+        <h2 class="fw-bold mb-1">
+          <i class="bi bi-plus-circle me-2 text-primary"></i
+          >スポットを日程に追加
+        </h2>
+        <p class="text-muted mb-4">追加するスポットを選んでください</p>
+
+        <!-- スポット検索 -->
+        <form
+          th:action="@{/days/{dayId}/add-spot(dayId=${dayId})}"
+          method="get"
+          class="d-flex gap-2 mb-4"
+        >
+          <input type="hidden" name="itineraryId" th:value="${itineraryId}" />
+          <input
+            type="text"
+            name="keyword"
+            class="form-control rounded-3"
+            th:value="${keyword}"
+            placeholder="スポット名で絞り込み"
+          />
+          <button type="submit" class="btn btn-outline-primary rounded-3">
+            <i class="bi bi-search"></i>
+          </button>
+        </form>
+
+        <!-- スポット選択 + 詳細入力フォーム -->
+        <form
+          th:action="@{/days/{dayId}/visits/add(dayId=${dayId})}"
+          method="post"
+        >
+          <input type="hidden" name="itineraryId" th:value="${itineraryId}" />
+
+          <!-- スポット一覧（ラジオボタン） -->
+          <div class="mb-4" style="max-height: 340px; overflow-y: auto">
+            <p
+              th:if="${#lists.isEmpty(spots)}"
+              class="text-muted text-center py-3"
+            >
+              スポットが見つかりません。
+              <a th:href="@{/spots/new}">新しく登録する</a>
+            </p>
+
+            <!--
+                    【ラジオボタンのUX工夫】
+                    input[type=radio] を display:none にして、
+                    label全体をクリックエリアにすることで「カード型ラジオボタン」を実現。
+                    label の for= と input の id= を一致させることでクリックが連動する。
+
+                    th:for="${'spot-' + spot.id}" のように動的にidを生成する。
+                -->
+            <div class="d-flex flex-column gap-2">
+              <label
+                th:each="spot : ${spots}"
+                th:for="${'spot-' + spot.id}"
+                class="spot-item"
+                onclick="
+                  this.classList.add('selected');
+                  document.querySelectorAll('.spot-item').forEach((el) => {
+                    if (el !== this) el.classList.remove('selected');
+                  });
+                "
+              >
+                <input
+                  type="radio"
+                  name="spotId"
+                  th:id="${'spot-' + spot.id}"
+                  th:value="${spot.id}"
+                  required
+                />
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <span
+                      class="category-badge me-2"
+                      th:classappend="${spot.category.name() == 'SIGHTSEEING' ? 'bg-primary bg-opacity-10 text-primary'
+                                                    : spot.category.name() == 'RESTAURANT' ? 'bg-success bg-opacity-10 text-success'
+                                                    : spot.category.name() == 'ACCOMMODATION' ? 'bg-warning bg-opacity-10 text-warning'
+                                                    : 'bg-secondary bg-opacity-10 text-secondary'}"
+                      th:text="${spot.category.displayName}"
+                      >観光地</span
+                    >
+                    <strong th:text="${spot.name}">栗林公園</strong>
+                  </div>
+                  <i class="bi bi-circle text-muted check-icon"></i>
+                </div>
+                <p th:if="${spot.address}" class="text-muted small mb-0 mt-1">
+                  <i class="bi bi-geo-alt me-1"></i
+                  ><span th:text="${spot.address}"></span>
+                </p>
+              </label>
+            </div>
+          </div>
+
+          <!-- 訪問詳細（オプション） -->
+          <div class="border rounded-3 p-3 mb-4 bg-light">
+            <p class="fw-semibold small mb-2 text-muted">訪問詳細（任意）</p>
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="form-label small">到着予定時刻</label>
+                <input
+                  type="time"
+                  name="arrivalTime"
+                  class="form-control form-control-sm rounded-3"
+                />
+              </div>
+              <div class="col-6">
+                <label class="form-label small">予算（円）</label>
+                <input
+                  type="number"
+                  name="budget"
+                  class="form-control form-control-sm rounded-3"
+                  placeholder="例: 1500"
+                />
+              </div>
+              <div class="col-12">
+                <label class="form-label small">メモ（予約番号など）</label>
+                <input
+                  type="text"
+                  name="memo"
+                  class="form-control form-control-sm rounded-3"
+                  placeholder="例: 予約番号 AB123"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary flex-grow-1 rounded-3">
+              <i class="bi bi-plus-circle me-1"></i>追加する
+            </button>
+            <a
+              th:href="@{/itineraries/{id}(id=${itineraryId})}"
+              class="btn btn-outline-secondary rounded-3"
+              >キャンセル</a
+            >
+          </div>
+        </form>
+
+        <div class="text-center mt-3">
+          <a
+            th:href="@{/spots/new}"
+            class="text-muted small text-decoration-none"
+          >
+            <i class="bi bi-plus me-1"></i
+            >スポットが見つからない？新しく登録する
+          </a>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
