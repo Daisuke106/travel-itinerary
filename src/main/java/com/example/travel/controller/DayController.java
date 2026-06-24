@@ -113,6 +113,9 @@ public class DayController {
             redirectAttributes.addFlashAttribute("successMessage", "スポットを削除しました");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            log.error("スポット削除中にエラーが発生しました: dayId={}, visitId={}", dayId, visitId, e);
+            redirectAttributes.addFlashAttribute("errorMessage", "スポットの削除に失敗しました。しばらく経ってから再度お試しください。");
         }
         return "redirect:/itineraries/" + itineraryId;
     }
