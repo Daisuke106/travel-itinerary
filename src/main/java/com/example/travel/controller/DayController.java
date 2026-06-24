@@ -157,6 +157,9 @@ public class DayController {
             spotVisitService.moveDown(visitId);
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            log.error("スポット移動(下)中にエラーが発生しました: dayId={}, visitId={}", dayId, visitId, e);
+            redirectAttributes.addFlashAttribute("errorMessage", "スポットの移動に失敗しました。しばらく経ってから再度お試しください。");
         }
         return "redirect:/itineraries/" + itineraryId;
     }
