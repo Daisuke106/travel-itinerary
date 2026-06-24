@@ -12,7 +12,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update          # 起動時にエンティティからテーブルを自動更新
-    show-sql: true              # 実行SQLをコンソールに表示 (学習用)
     properties:
       hibernate:
         format_sql: true        # SQLを整形して表示
@@ -45,6 +44,7 @@ spring:
 
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true              # 実行SQLをコンソールに表示 (開発プロファイルのみ)
 
 # ============================================================
 #  本番プロファイル (PostgreSQL)

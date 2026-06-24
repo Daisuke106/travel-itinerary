@@ -2,6 +2,7 @@ package com.example.travel.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -53,6 +54,7 @@ public class Spot {
     private String description;
 
     /** 公式URL */
+    @Pattern(regexp = "^(https?://.*)?$", message = "URLは http:// または https:// で始めてください")
     @Column(length = 500)
     private String websiteUrl;
 

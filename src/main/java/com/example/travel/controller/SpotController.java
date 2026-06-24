@@ -91,6 +91,8 @@ public class SpotController {
             return "spot/form";
         }
 
+        // マスアサインメント対策: フォームからIDが送られてきても新規作成として扱う
+        spot.setId(null);
         spotRepository.save(spot);
         redirectAttributes.addFlashAttribute("successMessage",
                 "「" + spot.getName() + "」を登録しました");

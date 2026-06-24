@@ -51,4 +51,11 @@ public interface SpotVisitRepository extends JpaRepository<SpotVisit, Long> {
     @Modifying
     @Query("DELETE FROM SpotVisit sv WHERE sv.itineraryDay.id = :dayId")
     void deleteAllByItineraryDayId(@Param("dayId") Long dayId);
+
+    /**
+     * 指定した visitId が dayId に属するか確認 (IDOR対策)
+     *
+     * 別ユーザーのvisitIdをURLに指定しても操作できないようにする。
+     */
+    boolean existsByIdAndItineraryDayId(Long id, Long itineraryDayId);
 }

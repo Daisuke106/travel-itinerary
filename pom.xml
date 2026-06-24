@@ -61,6 +61,18 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Spring Security (CSRF保護・セキュリティヘッダー) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- Thymeleaf + Spring Security (th:actionへのCSRFトークン自動挿入) -->
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+        </dependency>
+
         <!-- Lombok (getter/setter自動生成) -->
         <dependency>
             <groupId>org.projectlombok</groupId>

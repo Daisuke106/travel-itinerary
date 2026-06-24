@@ -170,6 +170,18 @@ public class SpotVisitService {
                 .orElseThrow(() -> new IllegalArgumentException("訪問記録が見つかりません: id=" + id));
     }
 
+    /**
+     * visitId が dayId に属するか検証する (IDOR対策)
+     *
+     * URLパラメーターを改ざんして他の日程のスポットを操作できないようにする。
+     * 不正アクセスの場合は例外を投げ、呼び出し元でエラーメッセージに変換する。
+     */
+    public void validateVisitBelongsToDay(Long visitId, Long dayId) {
+        if (!spotVisitRepository.existsByIdAndItineraryDayId(visitId, dayId)) {
+            throw new IllegalArgumentException("指定された訪問記録が見つかりません");
+        }
+    }
+
     // =========================================================
     // private ヘルパー
     // =========================================================
